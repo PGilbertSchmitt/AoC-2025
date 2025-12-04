@@ -45,7 +45,7 @@ fn get_largest_extreme_joltage(bank: &[usize], digits: u32) -> usize {
     if digits == 0 {
         return 0;
     }
-    
+
     let last_idx = bank.len() - (digits - 1) as usize;
     // println!("Bank: {bank:?}, digits left = {digits}, so last idx = {last_idx}");
     let search_space = &bank[0..last_idx];
@@ -59,7 +59,8 @@ fn get_largest_extreme_joltage(bank: &[usize], digits: u32) -> usize {
         }
     }
 
-    cur_high * (10 as usize).pow(digits-1) + get_largest_extreme_joltage(&bank[cur_high_idx + 1..], digits - 1)
+    cur_high * (10 as usize).pow(digits - 1)
+        + get_largest_extreme_joltage(&bank[cur_high_idx + 1..], digits - 1)
 }
 
 fn total_joltages(input: &str) -> usize {
@@ -67,7 +68,10 @@ fn total_joltages(input: &str) -> usize {
 }
 
 fn total_extreme_joltages(input: &str) -> usize {
-    get_banks(input).iter().map(|bank| get_largest_extreme_joltage(&bank[..], 12)).sum()
+    get_banks(input)
+        .iter()
+        .map(|bank| get_largest_extreme_joltage(&bank[..], 12))
+        .sum()
 }
 
 #[test]
