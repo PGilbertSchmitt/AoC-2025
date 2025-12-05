@@ -98,7 +98,7 @@ fn count_fresh_ingredients(input: &str) -> usize {
 
 fn count_total_fresh_ingredients(input: &str) -> usize {
     let Inventory { intervals, .. } = parse_inventory(input);
-    merge_intervals(intervals).iter().map(|interval| interval.size()).sum()
+    intervals.iter().map(|interval| interval.size()).sum()
 }
 
 #[test]
