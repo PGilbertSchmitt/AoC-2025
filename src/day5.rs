@@ -47,15 +47,23 @@ struct Inventory {
 fn parse_inventory(input: &str) -> Inventory {
     let separator_idx = input.find("\n\n").unwrap();
     let (id_ranges, ingredient_ids) = input.split_at(separator_idx);
-    let intervals: Vec<Interval>  = id_ranges.trim().split("\n").map(|range| {
-        let dash_at = range.find("-").unwrap();
-        let (start, end) = range.split_at(dash_at);
-        Interval::new(start.parse().unwrap(), end[1..].parse().unwrap())
-    }).collect();
+    let intervals: Vec<Interval> = id_ranges
+        .trim()
+        .split("\n")
+        .map(|range| {
+            let dash_at = range.find("-").unwrap();
+            let (start, end) = range.split_at(dash_at);
+            Interval::new(start.parse().unwrap(), end[1..].parse().unwrap())
+        })
+        .collect();
 
     Inventory {
         intervals: merge_intervals(intervals),
-        ingredients: ingredient_ids.trim().split("\n").map(|id| id.parse().unwrap()).collect(),
+        ingredients: ingredient_ids
+            .trim()
+            .split("\n")
+            .map(|id| id.parse().unwrap())
+            .collect(),
     }
 }
 
@@ -79,7 +87,10 @@ fn merge_intervals(mut intervals: Vec<Interval>) -> Vec<Interval> {
 }
 
 fn count_fresh_ingredients(input: &str) -> usize {
-    let Inventory { ingredients, intervals } = parse_inventory(input);
+    let Inventory {
+        ingredients,
+        intervals,
+    } = parse_inventory(input);
 
     let mut count = 0;
     for ingredient in ingredients {

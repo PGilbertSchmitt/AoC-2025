@@ -25,15 +25,6 @@ L82
 
 const INPUT: &'static str = include_str!("inputs/day1.txt");
 
-// fn parse_directions(input: &str) -> Vec<Token> {
-//   let mut lex = Token::lexer(input);
-//   let mut results = Vec::new();
-//   while let Some(Ok(token)) = lex.next() {
-//     results.push(token)
-//   }
-//   results
-// }
-
 fn count_zeros(input: &str) -> usize {
     let mut count = 0;
     let mut dial: isize = 50;
