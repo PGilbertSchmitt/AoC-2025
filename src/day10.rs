@@ -1,5 +1,5 @@
-use logos::Logos;
 use itertools::Itertools;
+use logos::Logos;
 
 const SAMPLE: &'static str = "
 [.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
@@ -10,11 +10,14 @@ const SAMPLE: &'static str = "
 const INPUT: &'static str = include_str!("./inputs/day10.txt");
 
 fn peel<'a>(s: &'a str) -> &'a str {
-    &s[1..s.len()-1]
+    &s[1..s.len() - 1]
 }
 
 fn get_sequence(s: &str) -> Vec<u16> {
-    peel(s).split(',').map(|s| s.parse::<u16>().unwrap()).collect()
+    peel(s)
+        .split(',')
+        .map(|s| s.parse::<u16>().unwrap())
+        .collect()
 }
 
 #[derive(Logos, Debug)]
@@ -58,15 +61,15 @@ fn parse_diagrams(input: &str) -> Vec<Diagram> {
     while let Some(Ok(token)) = tokens.next() {
         match token {
             Token::IndicatorLights(indicator) => {
-                let indicator_value: u16 = indicator.iter().enumerate().map(|(idx, on)| {
-                    if *on { 1 << idx } else { 0 }
-                }).sum();
+                let indicator_value: u16 = indicator
+                    .iter()
+                    .enumerate()
+                    .map(|(idx, on)| if *on { 1 << idx } else { 0 })
+                    .sum();
                 cur_diagram.indicators = indicator_value;
             }
             Token::Button(seq) => {
-                let sequence_value = seq.iter().map(|button| {
-                    1 << button
-                }).sum();
+                let sequence_value = seq.iter().map(|button| 1 << button).sum();
                 cur_diagram.buttons.push(sequence_value);
             }
             Token::JoltageReq(seq) => {
@@ -88,9 +91,9 @@ fn fewest_button_presses_to_initialize(diagram: &Diagram) -> usize {
     // Thank you Itertools, I did NOT want to implement a powerset
     for set in diagram.buttons.iter().powerset() {
         if set.iter().fold(0, |acc, button_value| acc ^ **button_value) == diagram.indicators {
-            return set.len()
+            return set.len();
         }
-    };
+    }
 
     0
 }
@@ -98,12 +101,14 @@ fn fewest_button_presses_to_initialize(diagram: &Diagram) -> usize {
 #[derive(Default)]
 struct Sequence {
     presses: usize,
-    // cur_joltages: 
+    // cur_joltages:
 }
 
 impl Sequence {
     fn expand(&self) -> Self {
-        Self { presses: self.presses }
+        Self {
+            presses: self.presses,
+        }
     }
 }
 
@@ -113,7 +118,12 @@ impl Sequence {
 // button list. If button A is at idx 0 and a sequence is (A-B, 1), then it can't
 // add more A buttons to itself for the next permutations.
 fn fewest_button_presses_to_configure(diagram: &Diagram) -> usize {
-    let mut sorted_joltages: Vec<(usize, u16)> = diagram.joltage_reqs.iter().enumerate().map(|(a, b)| (a, *b)).collect();
+    let mut sorted_joltages: Vec<(usize, u16)> = diagram
+        .joltage_reqs
+        .iter()
+        .enumerate()
+        .map(|(a, b)| (a, *b))
+        .collect();
     sorted_joltages.sort_by(|a, b| a.1.cmp(&b.1));
     try_button_combos(Sequence::default(), &sorted_joltages, &diagram.buttons).unwrap()
 }
@@ -124,11 +134,17 @@ fn try_button_combos(
     buttons: &[u16],
 ) -> Option<usize> {
     let &(indicator_idx, joltage_req) = remaining_joltages.first().unwrap();
-    let (applicable_buttons, remaining_buttons): (Vec<u16>, Vec<u16>) = buttons.iter().map(|x| *x).partition(|x| x & (1 << indicator_idx) > 0);
+    let (applicable_buttons, remaining_buttons): (Vec<u16>, Vec<u16>) = buttons
+        .iter()
+        .map(|x| *x)
+        .partition(|x| x & (1 << indicator_idx) > 0);
 
     let n = joltage_req as u128;
     let r = applicable_buttons.len() as u128;
-    println!("Lowest Joltage req: {joltage_req} with {} buttons", applicable_buttons.len());
+    println!(
+        "Lowest Joltage req: {joltage_req} with {} buttons",
+        applicable_buttons.len()
+    );
     // let num_combos = fact(n + r - 1) / (fact(r) * fact(n - 1));
     // println!("leads to {num_combos} combos");
 
@@ -136,16 +152,15 @@ fn try_button_combos(
 }
 
 fn fact(x: u128) -> u128 {
-    if x > 1 {
-        x * fact(x - 1)
-    } else {
-        1
-    }
+    if x > 1 { x * fact(x - 1) } else { 1 }
 }
 
 fn buttons_to_configure_machines(input: &str) -> usize {
     let diagrams = parse_diagrams(input);
-    diagrams.iter().map(fewest_button_presses_to_initialize).sum()
+    diagrams
+        .iter()
+        .map(fewest_button_presses_to_initialize)
+        .sum()
 }
 
 #[test]
