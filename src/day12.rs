@@ -56,9 +56,13 @@ fn parse_presents(input: &str) -> (Vec<Present>, Vec<Tree>) {
 }
 
 // This day is deceptive. It looks insanely challenging, but actually, the really basic optimization is all you need:
-// As long as the sum of spaces of all the presents could fit in the tree's space, then it will fit. Therefore, the
-// only check needed is to weed out any trees which have less space than the sum total of spaces in the presents. No
-// fitting or anything, no memoization. That's it. That's the whole thing.
+// All days in theory should lie within 3 buckets:
+// - Those which are immediately impossible (all presents would take up more space than there exists under the tree)
+// - Those which are immediately possible (even the loosest packing would sufficiently hold all presents)
+// - Those which are not immediately known and need to be calculated.
+// It turns out the input was crafted such that all trees fit into one of the first 2 buckets, so this is solvable
+// by only counting how many trees have less space than the sum total of spaces in the presents. No fitting, packing,
+// no memoization. That's it. That's the whole thing.
 #[test]
 fn part1() {
     let (presents, trees) = parse_presents(INPUT);
