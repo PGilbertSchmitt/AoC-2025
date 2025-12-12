@@ -35,10 +35,12 @@ enum Token {
     JoltageReq(Vec<u16>),
 }
 
+type Button = (u16, Vec<u16>);
+
 #[derive(Debug)]
 struct Diagram {
     indicators: u16,
-    buttons: Vec<u16>,
+    buttons: Vec<Button>,
     joltage_reqs: Vec<u16>,
 }
 
@@ -70,11 +72,10 @@ fn parse_diagrams(input: &str) -> Vec<Diagram> {
             }
             Token::Button(seq) => {
                 let sequence_value = seq.iter().map(|button| 1 << button).sum();
-                cur_diagram.buttons.push(sequence_value);
+                cur_diagram.buttons.push((sequence_value, seq));
             }
             Token::JoltageReq(seq) => {
                 cur_diagram.joltage_reqs = seq;
-                // Wait for part 2
                 diagrams.push(cur_diagram);
                 cur_diagram = Diagram::new();
             }
@@ -90,7 +91,11 @@ fn parse_diagrams(input: &str) -> Vec<Diagram> {
 fn fewest_button_presses_to_initialize(diagram: &Diagram) -> usize {
     // Thank you Itertools, I did NOT want to implement a powerset
     for set in diagram.buttons.iter().powerset() {
-        if set.iter().fold(0, |acc, button_value| acc ^ **button_value) == diagram.indicators {
+        if set
+            .iter()
+            .fold(0, |acc, &&(button_value, _)| acc ^ button_value)
+            == diagram.indicators
+        {
             return set.len();
         }
     }
@@ -98,64 +103,7 @@ fn fewest_button_presses_to_initialize(diagram: &Diagram) -> usize {
     0
 }
 
-#[derive(Default)]
-struct Sequence {
-    presses: usize,
-    // cur_joltages:
-}
-
-impl Sequence {
-    fn expand(&self) -> Self {
-        Self {
-            presses: self.presses,
-        }
-    }
-}
-
-// For part 2, pressing a button multiple times is now possible. However, I
-// can still optimize: Button sequence A-A-B is equivalent to A-B-A and B-A-A.
-// I can avoid these by batching each generated sequence with a min-idx into the
-// button list. If button A is at idx 0 and a sequence is (A-B, 1), then it can't
-// add more A buttons to itself for the next permutations.
-fn fewest_button_presses_to_configure(diagram: &Diagram) -> usize {
-    let mut sorted_joltages: Vec<(usize, u16)> = diagram
-        .joltage_reqs
-        .iter()
-        .enumerate()
-        .map(|(a, b)| (a, *b))
-        .collect();
-    sorted_joltages.sort_by(|a, b| a.1.cmp(&b.1));
-    try_button_combos(Sequence::default(), &sorted_joltages, &diagram.buttons).unwrap()
-}
-
-fn try_button_combos(
-    sequence: Sequence,
-    remaining_joltages: &[(usize, u16)],
-    buttons: &[u16],
-) -> Option<usize> {
-    let &(indicator_idx, joltage_req) = remaining_joltages.first().unwrap();
-    let (applicable_buttons, remaining_buttons): (Vec<u16>, Vec<u16>) = buttons
-        .iter()
-        .map(|x| *x)
-        .partition(|x| x & (1 << indicator_idx) > 0);
-
-    let n = joltage_req as u128;
-    let r = applicable_buttons.len() as u128;
-    println!(
-        "Lowest Joltage req: {joltage_req} with {} buttons",
-        applicable_buttons.len()
-    );
-    // let num_combos = fact(n + r - 1) / (fact(r) * fact(n - 1));
-    // println!("leads to {num_combos} combos");
-
-    Some(0)
-}
-
-fn fact(x: u128) -> u128 {
-    if x > 1 { x * fact(x - 1) } else { 1 }
-}
-
-fn buttons_to_configure_machines(input: &str) -> usize {
+fn buttons_to_initialize_machines(input: &str) -> usize {
     let diagrams = parse_diagrams(input);
     diagrams
         .iter()
@@ -163,16 +111,71 @@ fn buttons_to_configure_machines(input: &str) -> usize {
         .sum()
 }
 
+fn buttons_to_configure_machines(input: &str) -> usize {
+    let diagrams = parse_diagrams(input);
+    diagrams
+        .iter()
+        .map(|diagram| configure_joltages(&diagram.buttons, &diagram.joltage_reqs))
+        .sum()
+}
+
+fn apply_joltages(buttons: &[&Button], cur_joltages: &[u16]) -> Option<Vec<u16>> {
+    let mut new_joltages = Vec::from(cur_joltages);
+
+    for (_, button) in buttons {
+        for &button_part in button {
+            if new_joltages[button_part as usize] == 0 {
+                return None;
+            }
+            new_joltages[button_part as usize] -= 1;
+        }
+    }
+
+    Some(new_joltages.into_iter().map(|x| x / 2).collect())
+}
+
+fn configure_joltages(buttons: &[Button], current_joltages: &[u16]) -> usize {
+    if current_joltages.iter().all(|&j| j == 0) {
+        return 0;
+    }
+
+    let mut odd_joltage_pattern = 0;
+    for (idx, &j) in current_joltages.iter().enumerate() {
+        if j % 2 == 1 {
+            odd_joltage_pattern |= 1 << idx as u16;
+        }
+    }
+    // Special case if next_buttons is still all even?
+
+    let mut lowest = usize::MAX;
+    for set in buttons.iter().powerset() {
+        if set
+            .iter()
+            .fold(0, |acc, &(button_value, ..)| acc ^ button_value)
+            == odd_joltage_pattern
+        {
+            if let Some(next_joltages) = apply_joltages(&set[..], current_joltages) {
+                let sub_cost = configure_joltages(buttons, &next_joltages);
+                if sub_cost != usize::MAX {
+                    let solved = 2 * sub_cost + set.len();
+                    lowest = lowest.min(solved);
+                }
+            }
+        }
+    }
+
+    lowest
+}
+
 #[test]
 fn part1() {
-    assert_eq!(7, buttons_to_configure_machines(SAMPLE));
-    assert_eq!(457, buttons_to_configure_machines(INPUT));
+    assert_eq!(7, buttons_to_initialize_machines(SAMPLE));
+    assert_eq!(457, buttons_to_initialize_machines(INPUT));
 }
 
 #[test]
 fn part2() {
-    let diagrams = parse_diagrams(INPUT);
-    for d in diagrams.iter() {
-        fewest_button_presses_to_configure(d);
-    }
+    assert_eq!(33, buttons_to_configure_machines(SAMPLE));
+    // Takes 4 seconds on release mode, about a minute on debug mode
+    // assert_eq!(17576, buttons_to_configure_machines(INPUT));
 }
