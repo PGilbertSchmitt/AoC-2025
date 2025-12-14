@@ -129,7 +129,7 @@ fn count_problem_paths(network: &Network) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     let you = String::from("you");
     let out = String::from("out");
     let paths = count_unique_paths(
@@ -144,7 +144,7 @@ fn part1() {
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(2, count_problem_paths(&parse_network(SAMPLE_2)));
     assert_eq!(
         420_257_875_695_750,

@@ -173,7 +173,7 @@ where
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(7, calibrate(SAMPLE));
     assert_eq!(518, calibrate(INPUT));
 }

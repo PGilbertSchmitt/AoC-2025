@@ -129,13 +129,13 @@ Disc #6 has 19 positions; at time=0, it is at position 7.
 ";
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(5, find_earliest_capsule_time(parse_discs(SAMPLE)));
     assert_eq!(121834, find_earliest_capsule_time(parse_discs(INPUT)));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     // Amazingly, I did not need to use the Chinese remainder theorem here
     assert_eq!(
         85,

@@ -168,13 +168,13 @@ fn configure_joltages(buttons: &[Button], current_joltages: &[u16]) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(7, buttons_to_initialize_machines(SAMPLE));
     assert_eq!(457, buttons_to_initialize_machines(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(33, buttons_to_configure_machines(SAMPLE));
     // Takes 4 seconds on release mode, about a minute on debug mode
     // assert_eq!(17576, buttons_to_configure_machines(INPUT));

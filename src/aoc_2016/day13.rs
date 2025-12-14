@@ -130,7 +130,7 @@ fn count_all_spaces_within(input: usize, max_cost: usize) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     // Sample
     assert_eq!(11, find_shortest_path(10, Point(7, 4)));
 
@@ -139,6 +139,6 @@ fn part1() {
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(135, count_all_spaces_within(1352, 50));
 }

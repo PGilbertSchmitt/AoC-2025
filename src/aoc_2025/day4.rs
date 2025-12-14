@@ -106,13 +106,13 @@ fn remove_liftables(input: &str) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(13, count_liftables(SAMPLE));
     assert_eq!(1344, count_liftables(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(43, remove_liftables(SAMPLE));
     assert_eq!(8112, remove_liftables(INPUT));
 }

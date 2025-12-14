@@ -107,13 +107,13 @@ const SAMPLE_2: &'static str = "R8, R4, R4, R8";
 const INPUT: &'static str = include_str!("./inputs/day1.txt");
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(12, dist_away(SAMPLE_1));
     assert_eq!(291, dist_away(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(4, first_visited_twice(SAMPLE_2));
     assert_eq!(159, first_visited_twice(INPUT));
 }

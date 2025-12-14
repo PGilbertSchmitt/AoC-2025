@@ -83,7 +83,7 @@ const SUGAR: Behavior = Behavior {
 const LIMIT: i32 = 101;
 
 #[test]
-fn part1() {
+fn part_1() {
     let mut high_score = 0;
     for a in 0..LIMIT {
         for b in 0..(LIMIT - a) {
@@ -103,7 +103,7 @@ fn part1() {
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     let mut high_score = 0;
     for a in 0..LIMIT {
         for b in 0..(LIMIT - a) {

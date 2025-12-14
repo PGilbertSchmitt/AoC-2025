@@ -37,7 +37,7 @@ fn calculate_code(iterations: usize) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     let sample_iterations = calculate_iterations(3, 4);
     assert_eq!(7981243, calculate_code(sample_iterations));
 

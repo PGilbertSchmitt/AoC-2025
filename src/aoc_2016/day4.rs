@@ -166,12 +166,12 @@ totally-real-room-200[decoy]
 const INPUT: &'static str = include_str!("./inputs/day4.txt");
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(1514, sum_of_valid_room_ids(SAMPLE));
     assert_eq!(278221, sum_of_valid_room_ids(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(Some(267), find_northpole_objects_id(INPUT));
 }

@@ -142,13 +142,13 @@ const SAMPLE_3: &str = "(27x12)(20x12)(13x14)(7x10)(1x12)A";
 const INPUT: &str = include_str!("./inputs/day9.txt");
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(18, decompress(SAMPLE_1).len());
     assert_eq!(152851, decompress(INPUT).len());
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(20, decompress_v2(SAMPLE_1).size());
     assert_eq!(445, decompress_v2(SAMPLE_2).size());
     assert_eq!(241920, decompress_v2(SAMPLE_3).size());

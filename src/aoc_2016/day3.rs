@@ -83,11 +83,11 @@ fn count_valid_triangles_by_col(input: &str) -> usize {
 const INPUT: &'static str = include_str!("./inputs/day3.txt");
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(1032, count_valid_triangles_by_row(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(1838, count_valid_triangles_by_col(INPUT));
 }

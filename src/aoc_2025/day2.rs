@@ -113,13 +113,13 @@ fn get_sum_of_complex_invalids(input: &str) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(1_227_775_554, get_sum_of_invalids(SAMPLE));
     assert_eq!(23_560_874_270, get_sum_of_invalids(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(4_174_379_265, get_sum_of_complex_invalids(SAMPLE));
     assert_eq!(44_143_124_633, get_sum_of_complex_invalids(INPUT));
 }

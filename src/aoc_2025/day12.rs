@@ -64,7 +64,7 @@ fn parse_presents(input: &str) -> (Vec<Present>, Vec<Tree>) {
 // by only counting how many trees have less space than the sum total of spaces in the presents. No fitting, packing,
 // no memoization. That's it. That's the whole thing.
 #[test]
-fn part1() {
+fn part_1() {
     let (presents, trees) = parse_presents(INPUT);
 
     let valid_tree_configs = trees

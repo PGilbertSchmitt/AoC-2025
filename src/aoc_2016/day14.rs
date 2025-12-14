@@ -177,13 +177,13 @@ fn find_keys(input: &[u8], expensive: bool) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(22728, find_keys(b"abc", false));
     assert_eq!(15035, find_keys(b"ihaygndm", false));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     // Takes over a minute to evalute in release mode, and over 3 minutes in debug mode
     // assert_eq!(22551, find_keys(b"abc", true));
     // assert_eq!(19968, find_keys(b"ihaygndm", true));

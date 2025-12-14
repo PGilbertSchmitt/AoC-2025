@@ -77,7 +77,7 @@ fn valid_password(password: &Vec<u8>) -> bool {
 }
 
 #[test]
-fn solutions() {
+fn both_parts() {
     let mut pass = parse_input("vzbxkghb");
     while !valid_password(&pass) {
         increment(&mut pass);

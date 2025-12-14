@@ -140,13 +140,13 @@ zazbz[bzb]cdb
 const INPUT: &'static str = include_str!("./inputs/day7.txt");
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(2, count_tls_addresses(SAMPLE_1));
     assert_eq!(105, count_tls_addresses(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(3, count_ssl_addresses(SAMPLE_2));
     assert_eq!(258, count_ssl_addresses(INPUT));
 }

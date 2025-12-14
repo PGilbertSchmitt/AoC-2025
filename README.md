@@ -8,4 +8,5 @@ Some assertions or tests have been commented out. Usually, it's because the calc
 
 - 2015 Day 4 Part 2 - takes ~1.3 seconds in release mode
 - 2016 Day 8 Part 2 - spells text in the console
+- 2016 Day 5 Part 2 - takes ~3 seconds in release mode
 - 2016 Day 14 Part 2 - takes over a minute in release mode

@@ -160,13 +160,13 @@ fn eval_hard_code(input: &str) -> String {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!("1985", eval_code(SAMPLE));
     assert_eq!("18843", eval_code(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!("5DB3", eval_hard_code(SAMPLE));
     assert_eq!("67BB9", eval_hard_code(INPUT));
 }

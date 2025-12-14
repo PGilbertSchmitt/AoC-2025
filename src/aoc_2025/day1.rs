@@ -86,13 +86,13 @@ fn count_clicks_at_zero(input: &str) -> isize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(count_zeros(SAMPLE), 3);
     assert_eq!(count_zeros(INPUT), 1036);
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(count_clicks_at_zero(SAMPLE), 6);
     assert_eq!(count_clicks_at_zero(INPUT), 6228);
 }

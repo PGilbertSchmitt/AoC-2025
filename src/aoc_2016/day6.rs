@@ -66,13 +66,13 @@ enarar
 const INPUT: &'static str = include_str!("./inputs/day6.txt");
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!("easter", decode_signal(SAMPLE, true));
     assert_eq!("agmwzecr", decode_signal(INPUT, true));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     // I actually found these answers first by accident before realizing I reversed the sort order
     assert_eq!("advent", decode_signal(SAMPLE, false));
     assert_eq!("owlaxqvq", decode_signal(INPUT, false));

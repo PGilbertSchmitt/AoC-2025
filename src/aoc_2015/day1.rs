@@ -36,13 +36,13 @@ const SAMPLE_2: &[u8] = b"()())";
 const INPUT: &[u8] = include_bytes!("./inputs/day1.txt");
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(3, to_floor(SAMPLE_1), "sample");
     assert_eq!(74, to_floor(INPUT), "input");
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(5, first_basement_index(SAMPLE_2), "sample");
     assert_eq!(1795, first_basement_index(INPUT), "input");
 }

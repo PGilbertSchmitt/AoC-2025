@@ -49,7 +49,7 @@ fn count_containers(
 const INPUT: &str = include_str!("./inputs/day17.txt");
 
 #[test]
-fn solutions() {
+fn both_parts() {
     let containers = parse_containers(INPUT);
     let mut tracker = (usize::MAX, 0);
     assert_eq!(654, count_containers(150, 0, &containers, &mut tracker));

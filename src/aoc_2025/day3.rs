@@ -75,13 +75,13 @@ fn total_extreme_joltages(input: &str) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(357, total_joltages(SAMPLE));
     assert_eq!(17435, total_joltages(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(3_121_910_778_619, total_extreme_joltages(SAMPLE));
     assert_eq!(172_886_048_065_379, total_extreme_joltages(INPUT));
 }

@@ -113,13 +113,13 @@ fn count_total_fresh_ingredients(input: &str) -> usize {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     assert_eq!(3, count_fresh_ingredients(SAMPLE));
     assert_eq!(868, count_fresh_ingredients(INPUT));
 }
 
 #[test]
-fn part2() {
+fn part_2() {
     assert_eq!(14, count_total_fresh_ingredients(SAMPLE));
     assert_eq!(354_143_734_113_772, count_total_fresh_ingredients(INPUT));
 }

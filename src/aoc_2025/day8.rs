@@ -140,7 +140,7 @@ fn connect_circuits(input: &str, connections: usize) -> (usize, i64) {
 }
 
 #[test]
-fn part1() {
+fn part_1() {
     let (three_largest_sample, first_total_connection_sample) = connect_circuits(SAMPLE, 10);
     assert_eq!(40, three_largest_sample);
     assert_eq!(25272, first_total_connection_sample);

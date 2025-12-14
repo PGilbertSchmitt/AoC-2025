@@ -131,7 +131,7 @@ fn find_highest_route_cost(lookup: &HashMap<(City, City), usize>) -> usize {
 const INPUT: &'static str = include_str!("./inputs/day9.txt");
 
 #[test]
-fn solutions() {
+fn both_parts() {
     let lookup = build_dist_map(INPUT);
     assert_eq!(117, find_cheapest_route_cost(&lookup));
     assert_eq!(909, find_highest_route_cost(&lookup));
