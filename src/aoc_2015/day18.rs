@@ -104,7 +104,7 @@ fn get_total_lights(broken: bool) -> usize {
 }
 
 #[test]
-fn solutions() {
+fn both_parts() {
     assert_eq!(1061, get_total_lights(false));
     assert_eq!(1006, get_total_lights(true));
 }

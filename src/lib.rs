@@ -4,4 +4,7 @@ pub mod util;
 pub mod aoc_2015;
 
 #[cfg(test)]
+pub mod aoc_2016;
+
+#[cfg(test)]
 pub mod aoc_2025;

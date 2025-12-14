@@ -121,7 +121,7 @@ fn find_valid_aunt(input: &str, matcher: fn(&Compound) -> bool) -> Option<u16> {
 const INPUT: &str = include_str!("./inputs/day16.txt");
 
 #[test]
-fn part_1() {
+fn both_parts() {
     assert_eq!(Some(40), find_valid_aunt(INPUT, Compound::matches_exact));
     assert_eq!(
         Some(241),

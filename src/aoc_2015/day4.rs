@@ -1,11 +1,4 @@
-use md5::Context;
-
-fn generate_hash(base: &[u8], padding: usize) -> [u8; 16] {
-    let mut ctx = Context::new();
-    ctx.consume(base);
-    ctx.consume(padding.to_string().as_bytes());
-    ctx.finalize().0
-}
+use crate::util::generate_padded_hash;
 
 fn count_hash_zeros(hash: [u8; 16]) -> usize {
     let mut num_zeros = 0;
@@ -24,7 +17,7 @@ fn count_hash_zeros(hash: [u8; 16]) -> usize {
 fn find_hash_input(input: &[u8], num_zeros: usize) -> usize {
     let mut pad = 1;
     loop {
-        let hash = generate_hash(input, pad);
+        let hash = generate_padded_hash(input, pad);
         if count_hash_zeros(hash) >= num_zeros {
             return pad;
         }
