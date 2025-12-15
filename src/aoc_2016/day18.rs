@@ -13,14 +13,23 @@ fn count_safe_spaces(row: &Vec<bool>) -> usize {
 fn generate_row(row: Vec<bool>) -> Vec<bool> {
     let mut new_row = Vec::with_capacity(row.len());
     for (idx, middle) in row.iter().enumerate() {
-        let left = if idx == 0 { false } else { *row.get(idx - 1).unwrap() };
-        let right = if idx == row.len() - 1 { false } else { *row.get(idx + 1).unwrap() };
-        new_row.push(
-            match (left, *middle, right) {
-                (true, true, false) | (false, true, true) | (true, false, false) | (false, false, true) => true,
-                _ => false,
-            }
-        );
+        let left = if idx == 0 {
+            false
+        } else {
+            *row.get(idx - 1).unwrap()
+        };
+        let right = if idx == row.len() - 1 {
+            false
+        } else {
+            *row.get(idx + 1).unwrap()
+        };
+        new_row.push(match (left, *middle, right) {
+            (true, true, false)
+            | (false, true, true)
+            | (true, false, false)
+            | (false, false, true) => true,
+            _ => false,
+        });
     }
     new_row
 }
@@ -42,4 +51,3 @@ fn both_parts() {
     assert_eq!(1951, calculate_generations(INPUT, 40));
     assert_eq!(20_002_936, calculate_generations(INPUT, 400_000));
 }
-

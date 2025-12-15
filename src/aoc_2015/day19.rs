@@ -1,7 +1,7 @@
 use itertools::Itertools;
 use logos::Logos;
 use std::{
-    collections::{hash_map::Entry, HashMap, HashSet},
+    collections::{HashMap, HashSet, hash_map::Entry},
     usize,
 };
 

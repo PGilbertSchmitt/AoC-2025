@@ -93,11 +93,7 @@ fn parse_commands(input: &'static str) -> Vec<Command> {
 }
 
 fn light(value: bool) -> isize {
-    if value {
-        1
-    } else {
-        0
-    }
+    if value { 1 } else { 0 }
 }
 
 // Iterate through the commands in reverse order until we either reach a terminal action

@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
-use nohash_hasher::IntSet;
 use itertools::Itertools;
+use nohash_hasher::IntSet;
 
 // SAMPLE
 // The first floor contains a hydrogen-compatible microchip and a lithium-compatible microchip.
@@ -34,12 +34,12 @@ impl Element {
         // For the 8 bits that make up the specific machines on each floor,
         // each element is a bit in a specific place
         match self {
-            Hydrogen   => 0x01, // 1 << 0
-            Lithium    => 0x02, // 1 << 1
-            Thulium    => 0x04, // 1 << 2
-            Ruthenium  => 0x08, // 1 << 3
-            Cobalt     => 0x10, // 1 << 4
-            Polonium   => 0x20, // 1 << 5
+            Hydrogen => 0x01,   // 1 << 0
+            Lithium => 0x02,    // 1 << 1
+            Thulium => 0x04,    // 1 << 2
+            Ruthenium => 0x08,  // 1 << 3
+            Cobalt => 0x10,     // 1 << 4
+            Polonium => 0x20,   // 1 << 5
             Promethium => 0x40, // 1 << 6
         }
     }
@@ -103,15 +103,17 @@ struct Building {
 
 // A valid floor is one where either there are no generators, there are no microchips, or every microchip has a matching generator.
 fn is_floor_valid(floor: &Vec<Machine>) -> bool {
-    let rtg_elems: Vec<Element> = floor.iter().filter(|m| m.is_rtg()).map(|m| m.to_element()).collect();
+    let rtg_elems: Vec<Element> = floor
+        .iter()
+        .filter(|m| m.is_rtg())
+        .map(|m| m.to_element())
+        .collect();
     if rtg_elems.is_empty() {
         return true;
     }
-    floor.iter().all(|machine| {
-        match machine {
-            Generator(_) => true,
-            Microchip(el) => rtg_elems.contains(el),
-        }
+    floor.iter().all(|machine| match machine {
+        Generator(_) => true,
+        Microchip(el) => rtg_elems.contains(el),
     })
 }
 
@@ -140,10 +142,7 @@ impl Building {
                 Microchip(Ruthenium),
                 Microchip(Cobalt),
             ],
-            floor1: vec![
-                Microchip(Polonium),
-                Microchip(Promethium),
-            ],
+            floor1: vec![Microchip(Polonium), Microchip(Promethium)],
             floor2: Vec::new(),
             floor3: Vec::new(),
         }
@@ -266,10 +265,26 @@ impl Building {
         let elevator_bit: u64 = 0x8000 << (self.elevator * 16);
 
         elevator_bit
-        | self.floor0.iter().fold(0, |acc, machine| acc | machine.base_value()) << 0
-        | self.floor1.iter().fold(0, |acc, machine| acc | machine.base_value()) << 16
-        | self.floor2.iter().fold(0, |acc, machine| acc | machine.base_value()) << 32
-        | self.floor3.iter().fold(0, |acc, machine| acc | machine.base_value()) << 48
+            | self
+                .floor0
+                .iter()
+                .fold(0, |acc, machine| acc | machine.base_value())
+                << 0
+            | self
+                .floor1
+                .iter()
+                .fold(0, |acc, machine| acc | machine.base_value())
+                << 16
+            | self
+                .floor2
+                .iter()
+                .fold(0, |acc, machine| acc | machine.base_value())
+                << 32
+            | self
+                .floor3
+                .iter()
+                .fold(0, |acc, machine| acc | machine.base_value())
+                << 48
     }
 
     fn is_done(&self) -> bool {
@@ -308,8 +323,17 @@ impl Building {
         // Never take 2 items down together
         if to > from {
             for elevator in double_item_move.iter() {
-                let new_to_floor: Vec<Machine> = to_floor.iter().chain(elevator.to_owned()).cloned().collect();
-                let new_from_floor: Vec<Machine> = self.get_floor(from).iter().filter(|m| !elevator.contains(m)).cloned().collect();
+                let new_to_floor: Vec<Machine> = to_floor
+                    .iter()
+                    .chain(elevator.to_owned())
+                    .cloned()
+                    .collect();
+                let new_from_floor: Vec<Machine> = self
+                    .get_floor(from)
+                    .iter()
+                    .filter(|m| !elevator.contains(m))
+                    .cloned()
+                    .collect();
                 if is_floor_valid(&new_to_floor) && is_floor_valid(&new_from_floor) {
                     let mut new_building = self.clone();
                     new_building.elevator = to;
@@ -320,8 +344,17 @@ impl Building {
             }
         }
         for elevator in single_item_move {
-            let new_to_floor: Vec<Machine> = to_floor.iter().chain(elevator.to_owned()).cloned().collect();
-            let new_from_floor: Vec<Machine> = self.get_floor(from).iter().filter(|m| !elevator.contains(m)).cloned().collect();
+            let new_to_floor: Vec<Machine> = to_floor
+                .iter()
+                .chain(elevator.to_owned())
+                .cloned()
+                .collect();
+            let new_from_floor: Vec<Machine> = self
+                .get_floor(from)
+                .iter()
+                .filter(|m| !elevator.contains(m))
+                .cloned()
+                .collect();
             if is_floor_valid(&new_to_floor) && is_floor_valid(&new_from_floor) {
                 let mut new_building = self.clone();
                 new_building.elevator = to;
@@ -355,7 +388,7 @@ fn find_shortest_arrangement(start: Building) -> u64 {
                 next_states.push_back((iter + 1, next_hash));
             }
         }
-    };
+    }
 
     panic!("Could not find solution");
 }

@@ -1,5 +1,7 @@
-use std::ops::Add;
 use md5::Context;
+use std::ops::Add;
+
+pub mod heap;
 
 #[derive(PartialEq, Eq, Hash, Clone)]
 pub struct Pair(pub isize, pub isize);
