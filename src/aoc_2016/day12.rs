@@ -15,6 +15,9 @@ enum Token {
     #[token("jnz")]
     JumpNotZero,
 
+    #[token("tgl")]
+    Toggle,
+
     #[regex("[a-z]", |lex| lex.slice().chars().nth(0))]
     Register(char),
 
@@ -22,19 +25,12 @@ enum Token {
     Value(isize),
 }
 
-enum Operand {
+pub enum Operand {
     Register(usize),
     Value(isize),
 }
 
 impl Operand {
-    fn get_reg(self) -> usize {
-        match self {
-            Operand::Register(reg) => reg,
-            _ => panic!("Not a register"),
-        }
-    }
-
     fn to_value(&self, registers: &Registers) -> isize {
         match self {
             Self::Value(val) => *val,
@@ -59,18 +55,19 @@ impl From<Token> for Operand {
     }
 }
 
-enum Instruction {
-    Cpy(Operand, usize),
-    Inc(usize),
-    Dec(usize),
+pub enum Instruction {
+    Cpy(Operand, Operand),
+    Inc(Operand),
+    Dec(Operand),
     Jnz(Operand, Operand),
+    Tgl(Operand),
 }
 
 fn get_operand(tokens: &mut Lexer<Token>) -> Operand {
     Operand::from(tokens.next().unwrap().unwrap())
 }
 
-fn parse_instructions(input: &str) -> Vec<Instruction> {
+pub fn parse_instructions(input: &str) -> Vec<Instruction> {
     let mut instructions: Vec<Instruction> = Vec::new();
     let mut tokens = Token::lexer(input);
 
@@ -78,21 +75,25 @@ fn parse_instructions(input: &str) -> Vec<Instruction> {
         match token {
             Token::Copy => {
                 let x = get_operand(&mut tokens);
-                let y = get_operand(&mut tokens).get_reg();
+                let y = get_operand(&mut tokens);
                 instructions.push(Instruction::Cpy(x, y));
             }
             Token::Increment => {
-                let x = get_operand(&mut tokens).get_reg();
+                let x = get_operand(&mut tokens);
                 instructions.push(Instruction::Inc(x));
             }
             Token::Decrement => {
-                let x = get_operand(&mut tokens).get_reg();
+                let x = get_operand(&mut tokens);
                 instructions.push(Instruction::Dec(x));
             }
             Token::JumpNotZero => {
                 let x = get_operand(&mut tokens);
                 let y = get_operand(&mut tokens);
                 instructions.push(Instruction::Jnz(x, y));
+            }
+            Token::Toggle => {
+                let x = get_operand(&mut tokens);
+                instructions.push(Instruction::Tgl(x));
             }
             _ => panic!("Unexpected token"),
         }
@@ -103,29 +104,38 @@ fn parse_instructions(input: &str) -> Vec<Instruction> {
 
 type Registers = [isize; 4];
 
-fn execute(ins: &Vec<Instruction>, register_c: isize) -> isize {
+pub fn execute(ins: &Vec<Instruction>, a: isize, b: isize, c: isize, d: isize) -> isize {
     let mut ptr = 0;
-    let mut state: Registers = [0, 0, register_c, 0];
+    let mut state: Registers = [a, b, c, d];
     let len = ins.len();
+
+    let mut toggles = vec![false; ins.len()];
 
     while ptr < len {
         let cur_ins = &ins[ptr];
+        let toggle = toggles[ptr];
 
-        match cur_ins {
-            Instruction::Cpy(x, y) => {
-                let src = x.to_value(&state);
-                state[*y] = src;
+        match (toggle, cur_ins) {
+            (false, Instruction::Cpy(x, y)) | (true, Instruction::Jnz(x, y)) => {
+                if let Operand::Register(y) = y {
+                    let src = x.to_value(&state);
+                    state[*y] = src;
+                }
                 ptr += 1;
             }
-            Instruction::Inc(x) => {
-                state[*x] += 1;
+            (false, Instruction::Inc(x)) | (true, Instruction::Dec(x)) | (true, Instruction::Tgl(x)) => {
+                if let Operand::Register(x) = x {
+                    state[*x] += 1;
+                }
                 ptr += 1;
             }
-            Instruction::Dec(x) => {
-                state[*x] -= 1;
+            (false, Instruction::Dec(x)) | (true, Instruction::Inc(x)) => {
+                if let Operand::Register(x) = x {
+                    state[*x] -= 1;
+                }
                 ptr += 1;
             }
-            Instruction::Jnz(x, y) => {
+            (false, Instruction::Jnz(x, y)) | (true, Instruction::Cpy(x, y)) => {
                 if x.to_value(&state) != 0 {
                     let delta = y.to_value(&state);
                     if delta.is_negative() {
@@ -140,6 +150,14 @@ fn execute(ins: &Vec<Instruction>, register_c: isize) -> isize {
                 } else {
                     ptr += 1;
                 }
+            }
+            (false, Instruction::Tgl(x)) => {
+                let offset = x.to_value(&state);
+                let toggled_ptr = (ptr as isize) + offset;
+                if toggled_ptr >= 0 && toggled_ptr < toggles.len() as isize {
+                    toggles[toggled_ptr as usize] = !toggles[toggled_ptr as usize];
+                }
+                ptr += 1;
             }
         }
     }
@@ -162,7 +180,7 @@ fn both_parts() {
     let sample_ins = parse_instructions(SAMPLE);
     let input_ins = parse_instructions(INPUT);
 
-    assert_eq!(42, execute(&sample_ins, 0));
-    assert_eq!(317993, execute(&input_ins, 0));
-    assert_eq!(9227647, execute(&input_ins, 1));
+    assert_eq!(42, execute(&sample_ins, 0, 0, 0, 0));
+    assert_eq!(317993, execute(&input_ins, 0, 0, 0, 0));
+    assert_eq!(9227647, execute(&input_ins, 0, 0, 1, 0));
 }
