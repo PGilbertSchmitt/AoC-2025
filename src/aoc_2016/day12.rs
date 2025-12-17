@@ -1,8 +1,8 @@
 use logos::{Lexer, Logos};
 
-#[derive(Logos)]
+#[derive(Logos, Debug)]
 #[logos(skip r"[\n ]")]
-enum Token {
+pub enum Token {
     #[token("cpy")]
     Copy,
 
@@ -18,6 +18,9 @@ enum Token {
     #[token("tgl")]
     Toggle,
 
+    #[token("out")]
+    Out,
+
     #[regex("[a-z]", |lex| lex.slice().chars().nth(0))]
     Register(char),
 
@@ -25,13 +28,14 @@ enum Token {
     Value(isize),
 }
 
+#[derive(Debug)]
 pub enum Operand {
     Register(usize),
     Value(isize),
 }
 
 impl Operand {
-    fn to_value(&self, registers: &Registers) -> isize {
+    pub fn to_value(&self, registers: &Registers) -> isize {
         match self {
             Self::Value(val) => *val,
             Self::Register(reg) => registers[*reg],
@@ -55,12 +59,14 @@ impl From<Token> for Operand {
     }
 }
 
+#[derive(Debug)]
 pub enum Instruction {
     Cpy(Operand, Operand),
     Inc(Operand),
     Dec(Operand),
     Jnz(Operand, Operand),
     Tgl(Operand),
+    Out(Operand),
 }
 
 fn get_operand(tokens: &mut Lexer<Token>) -> Operand {
@@ -95,6 +101,10 @@ pub fn parse_instructions(input: &str) -> Vec<Instruction> {
                 let x = get_operand(&mut tokens);
                 instructions.push(Instruction::Tgl(x));
             }
+            Token::Out => {
+                let x = get_operand(&mut tokens);
+                instructions.push(Instruction::Out(x));
+            }
             _ => panic!("Unexpected token"),
         }
     }
@@ -102,7 +112,7 @@ pub fn parse_instructions(input: &str) -> Vec<Instruction> {
     instructions
 }
 
-type Registers = [isize; 4];
+pub type Registers = [isize; 4];
 
 pub fn execute(ins: &Vec<Instruction>, a: isize, b: isize, c: isize, d: isize) -> isize {
     let mut ptr = 0;
@@ -159,6 +169,8 @@ pub fn execute(ins: &Vec<Instruction>, a: isize, b: isize, c: isize, d: isize) -
                 }
                 ptr += 1;
             }
+            // The program with Tgl doesn't have Out
+            _ => unreachable!(),
         }
     }
 
