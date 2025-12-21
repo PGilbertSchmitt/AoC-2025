@@ -3,7 +3,7 @@ use crate::aoc_2019::intcode_cpu::IntCPU;
 const INPUT: &str = include_str!("./inputs/day5.txt");
 
 #[test]
-fn part_1() {
+fn solutions() {
     let mut cpu = IntCPU::new(INPUT);
 
     cpu.push_input(1);

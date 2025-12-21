@@ -97,11 +97,7 @@ impl IntCPU {
 
     fn get_as(&self, idx: i64, positional: bool) -> i64 {
         let value = self.program[idx as usize];
-        if positional {
-            self.get(value)
-        } else {
-            value
-        }
+        if positional { self.get(value) } else { value }
     }
 
     #[inline]
@@ -116,7 +112,12 @@ impl IntCPU {
         let param_1_positional = (op % 1000) / 100 == 0;
         let param_2_positional = (op % 10_000) / 1000 == 0;
         let param_3_positional = (op % 100_000) / 10_000 == 0;
-        (op_code, param_1_positional, param_2_positional, param_3_positional)
+        (
+            op_code,
+            param_1_positional,
+            param_2_positional,
+            param_3_positional,
+        )
     }
 
     fn add(&mut self, mode_1: bool, mode_2: bool) {
