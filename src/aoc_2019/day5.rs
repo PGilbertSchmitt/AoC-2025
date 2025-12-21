@@ -4,14 +4,15 @@ const INPUT: &str = include_str!("./inputs/day5.txt");
 
 #[test]
 fn solutions() {
-    let mut cpu = IntCPU::new(INPUT);
+    let program = IntCPU::parse_program(INPUT);
 
+    let mut cpu = IntCPU::new(&program);
     cpu.push_input(1);
     cpu.exec();
-    assert_eq!(Some(&13285749), cpu.output_queue.iter().last());
+    assert_eq!(Some(13285749), cpu.last_output());
 
-    cpu.reset();
+    let mut cpu = IntCPU::new(&program);
     cpu.push_input(5);
     cpu.exec();
-    assert_eq!(Some(&5000972), cpu.output_queue.iter().last());
+    assert_eq!(Some(5000972), cpu.last_output());
 }

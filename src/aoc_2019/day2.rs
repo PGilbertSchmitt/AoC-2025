@@ -1,4 +1,4 @@
-use crate::aoc_2019::intcode_cpu::IntCPU;
+use crate::aoc_2019::intcode_cpu::{IntCPU, Program};
 
 const SAMPLE_1: &str = "1,9,10,3,2,3,11,0,99,30,40,50";
 const SAMPLE_2: &str = "1,0,0,0,99";
@@ -8,9 +8,10 @@ const SAMPLE_5: &str = "1,1,1,4,99,5,6,0,99";
 
 const INPUT: &str = include_str!("./inputs/day2.txt");
 
-fn find_noun_and_verb(cpu: &mut IntCPU, search_value: i64) -> i64 {
-    for noun in 0..cpu.len() {
-        for verb in 0..cpu.len() {
+fn find_noun_and_verb(program: &Program, search_value: i64) -> i64 {
+    for noun in 0..100 {
+        for verb in 0..100 {
+            let mut cpu = IntCPU::new(program);
             cpu.init(noun, verb);
             cpu.exec();
             if search_value == cpu.get(0) {
@@ -23,32 +24,33 @@ fn find_noun_and_verb(cpu: &mut IntCPU, search_value: i64) -> i64 {
 
 #[test]
 fn samples() {
-    let mut cpu = IntCPU::new(SAMPLE_1);
+    let mut cpu = IntCPU::from_str(SAMPLE_1);
     cpu.exec();
     assert_eq!(3500, cpu.get(0));
 
-    let mut cpu = IntCPU::new(SAMPLE_2);
+    let mut cpu = IntCPU::from_str(SAMPLE_2);
     cpu.exec();
     assert_eq!(2, cpu.get(0));
 
-    let mut cpu = IntCPU::new(SAMPLE_3);
+    let mut cpu = IntCPU::from_str(SAMPLE_3);
     cpu.exec();
     assert_eq!(2, cpu.get(0));
 
-    let mut cpu = IntCPU::new(SAMPLE_4);
+    let mut cpu = IntCPU::from_str(SAMPLE_4);
     cpu.exec();
     assert_eq!(2, cpu.get(0));
 
-    let mut cpu = IntCPU::new(SAMPLE_5);
+    let mut cpu = IntCPU::from_str(SAMPLE_5);
     cpu.exec();
     assert_eq!(30, cpu.get(0));
 }
 
 #[test]
 fn solutions() {
-    let mut cpu = IntCPU::new(INPUT);
+    let program = IntCPU::parse_program(INPUT);
+    let mut cpu = IntCPU::new(&program);
     cpu.init(12, 2);
     cpu.exec();
     assert_eq!(4930687, cpu.get(0));
-    assert_eq!(5335, find_noun_and_verb(&mut cpu, 19690720));
+    assert_eq!(5335, find_noun_and_verb(&program, 19690720));
 }

@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-type Program = Vec<i64>;
+pub type Program = Vec<i64>;
 
 pub fn parse_program(input: &str) -> Program {
     input
@@ -12,11 +12,10 @@ pub fn parse_program(input: &str) -> Program {
 
 pub struct IntCPU {
     program: Program,
-    orig_program: Program,
-    len: i64,
     ptr: i64,
     input_queue: VecDeque<i64>,
-    pub output_queue: VecDeque<i64>,
+    output_queue: VecDeque<i64>,
+    halted: bool,
 }
 
 const ADD: i64 = 1;
@@ -30,7 +29,7 @@ const EQUALS: i64 = 8;
 const QUIT: i64 = 99;
 
 impl IntCPU {
-    fn parse_program(input: &str) -> Program {
+    pub fn parse_program(input: &str) -> Program {
         input
             .trim()
             .split(",")
@@ -38,27 +37,22 @@ impl IntCPU {
             .collect()
     }
 
-    pub fn new(input: &str) -> Self {
+    pub fn from_str(input: &str) -> Self {
         let program = Self::parse_program(input);
+        Self::new(&program)
+    }
+
+    pub fn new(program: &Program) -> Self {
         Self {
-            len: program.len() as i64,
-            orig_program: program.clone(),
-            program,
+            program: program.clone(),
             ptr: 0,
             input_queue: VecDeque::new(),
             output_queue: VecDeque::new(),
+            halted: false,
         }
     }
 
-    pub fn reset(&mut self) {
-        self.ptr = 0;
-        self.program = self.orig_program.clone();
-        self.input_queue.clear();
-        self.output_queue.clear();
-    }
-
     pub fn init(&mut self, pos_1: i64, pos_2: i64) {
-        self.reset();
         self.program[1] = pos_1;
         self.program[2] = pos_2;
     }
@@ -67,27 +61,53 @@ impl IntCPU {
         self.input_queue.push_back(value);
     }
 
-    #[inline]
-    pub fn len(&self) -> i64 {
-        self.len
+    pub fn last_output(&mut self) -> Option<i64> {
+        self.output_queue.iter().last().cloned()
     }
 
     pub fn exec(&mut self) {
         loop {
-            let (ins, mode_1, mode_2, _mode_3) = self.param_modes();
-            match ins {
-                ADD => self.add(mode_1, mode_2),
-                MULT => self.mult(mode_1, mode_2),
-                INPUT => self.input(),
-                OUTPUT => self.output(mode_1),
-                JUMP_IF_TRUE => self.jump(true, mode_1, mode_2),
-                JUMP_IF_FALSE => self.jump(false, mode_1, mode_2),
-                LESS_THAN => self.less_than(mode_1, mode_2),
-                EQUALS => self.equals(mode_1, mode_2),
-                QUIT => break,
-                _ => unimplemented!(),
+            if self.step(false) {
+                break;
             }
         }
+    }
+
+    pub fn next(&mut self) -> Option<i64> {
+        loop {
+            if self.step(true) {
+                return self.output_queue.iter().last().cloned();
+            }
+        }
+    }
+
+    pub fn unfinished(&self) -> bool {
+        !self.halted
+    }
+
+    fn step(&mut self, pause_on_output: bool) -> bool {
+        let (ins, mode_1, mode_2, _mode_3) = self.param_modes();
+        match ins {
+            ADD => self.add(mode_1, mode_2),
+            MULT => self.mult(mode_1, mode_2),
+            INPUT => self.input(),
+            OUTPUT => {
+                self.output(mode_1);
+                if pause_on_output {
+                    return true;
+                }
+            }
+            JUMP_IF_TRUE => self.jump(true, mode_1, mode_2),
+            JUMP_IF_FALSE => self.jump(false, mode_1, mode_2),
+            LESS_THAN => self.less_than(mode_1, mode_2),
+            EQUALS => self.equals(mode_1, mode_2),
+            QUIT => {
+                self.halted = true;
+                return true;
+            }
+            _ => unimplemented!(),
+        }
+        false
     }
 
     #[inline]
@@ -165,7 +185,6 @@ impl IntCPU {
         }
     }
 
-    // LESS_THAN
     fn less_than(&mut self, mode_1: bool, mode_2: bool) {
         let ptr = self.ptr;
         let a = self.get_as(ptr + 1, mode_1);
@@ -175,9 +194,6 @@ impl IntCPU {
         self.ptr += 4;
     }
 
-    // EQUALS
-
-    // LESS_THAN
     fn equals(&mut self, mode_1: bool, mode_2: bool) {
         let ptr = self.ptr;
         let a = self.get_as(ptr + 1, mode_1);
