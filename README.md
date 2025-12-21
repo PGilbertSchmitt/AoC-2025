@@ -11,5 +11,6 @@ Some assertions or tests have been commented out. Usually, it's because the calc
 - 2016 Day 5 Part 2 - takes ~3 seconds
 - 2016 Day 14 Part 2 - takes over a minute
 - 2016 Day 23 Part 2 - takes ~5 seconds
+- 2019 Day 8 Part 2 - spells text in the console
 
 All time measurements are in release mode on my ~5yo gaming computer. It's not crazy fast, but it's no slouch.
