@@ -54,7 +54,7 @@ fn next_state(b: BoardState, broken: bool) -> BoardState {
     for (x, line) in b.iter().enumerate() {
         for (y, cell) in line.iter().enumerate() {
             if *cell {
-                let p = Pair(x as isize, y as isize);
+                let p = Pair(x as i64, y as i64);
                 for neighbor in p.neighbors() {
                     neighbor_map
                         .entry(neighbor)
@@ -69,7 +69,7 @@ fn next_state(b: BoardState, broken: bool) -> BoardState {
 
     for (x, line) in b.into_iter().enumerate() {
         for (y, cell) in line.into_iter().enumerate() {
-            let key = Pair(x as isize, y as isize);
+            let key = Pair(x as i64, y as i64);
             let n_count = *neighbor_map.get(&key).unwrap_or(&0);
             if cell {
                 next_board[x][y] = n_count == 2 || n_count == 3;

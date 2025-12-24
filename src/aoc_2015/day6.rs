@@ -18,8 +18,8 @@ enum Token {
     Toggle,
 
     // Other
-    #[regex("[0-9]+", |lex| lex.slice().parse::<isize>().unwrap())]
-    Integer(isize),
+    #[regex("[0-9]+", |lex| lex.slice().parse::<i64>().unwrap())]
+    Integer(i64),
 }
 
 impl Display for Token {
@@ -50,7 +50,7 @@ impl From<Token> for Action {
     }
 }
 
-impl From<Token> for isize {
+impl From<Token> for i64 {
     fn from(value: Token) -> Self {
         match value {
             Token::Integer(value) => value,
@@ -92,7 +92,7 @@ fn parse_commands(input: &'static str) -> Vec<Command> {
     commands
 }
 
-fn light(value: bool) -> isize {
+fn light(value: bool) -> i64 {
     if value { 1 } else { 0 }
 }
 
@@ -101,7 +101,7 @@ fn light(value: bool) -> isize {
 // toggle we reach, we invert the toggle state, and when we return, we invert if the toggle
 // is active. Doing this in reverse order means we have terminal commands that can prevent
 // use from having to iterate through all commands.
-fn is_lit(commands: &Vec<Command>, x: isize, y: isize) -> isize {
+fn is_lit(commands: &Vec<Command>, x: i64, y: i64) -> i64 {
     let mut toggled = false;
     for Command { action, start, end } in commands.iter().rev() {
         if start.0 <= x && x <= end.0 && start.1 <= y && y <= end.1 {
@@ -119,8 +119,8 @@ fn is_lit(commands: &Vec<Command>, x: isize, y: isize) -> isize {
 
 // Since we need the full context of all commands that a pixel may go through, we can't
 // terminate early like with part 1. Still, it's just quick maffs.
-fn brightness_level(commands: &Vec<Command>, x: isize, y: isize) -> isize {
-    let mut level: isize = 0;
+fn brightness_level(commands: &Vec<Command>, x: i64, y: i64) -> i64 {
+    let mut level: i64 = 0;
     for Command { action, start, end } in commands.iter() {
         if start.0 <= x && x <= end.0 && start.1 <= y && y <= end.1 {
             match action {
@@ -133,12 +133,12 @@ fn brightness_level(commands: &Vec<Command>, x: isize, y: isize) -> isize {
     level
 }
 
-fn get_boundaries<'a, I>(commands: I) -> (Vec<isize>, Vec<isize>)
+fn get_boundaries<'a, I>(commands: I) -> (Vec<i64>, Vec<i64>)
 where
     I: Iterator<Item = &'a Command>,
 {
-    let mut x_boundaries = HashSet::<isize>::new();
-    let mut y_boundaries = HashSet::<isize>::new();
+    let mut x_boundaries = HashSet::<i64>::new();
+    let mut y_boundaries = HashSet::<i64>::new();
     x_boundaries.insert(0);
     y_boundaries.insert(0);
 
@@ -149,18 +149,18 @@ where
         y_boundaries.insert(command.end.1 + 1);
     }
 
-    let mut x_boundaries: Vec<isize> = x_boundaries.into_iter().collect();
-    let mut y_boundaries: Vec<isize> = y_boundaries.into_iter().collect();
+    let mut x_boundaries: Vec<i64> = x_boundaries.into_iter().collect();
+    let mut y_boundaries: Vec<i64> = y_boundaries.into_iter().collect();
     x_boundaries.sort();
     y_boundaries.sort();
 
     (x_boundaries, y_boundaries)
 }
 
-fn get_lit_lights(commands: &Vec<Command>, f: fn(&Vec<Command>, isize, isize) -> isize) -> isize {
+fn get_lit_lights(commands: &Vec<Command>, f: fn(&Vec<Command>, i64, i64) -> i64) -> i64 {
     let (x_boundaries, y_boundaries) = get_boundaries(commands.iter());
 
-    let mut on_count: isize = 0;
+    let mut on_count: i64 = 0;
 
     let mut xs = x_boundaries.iter().peekable();
     while let Some(cur_x) = xs.next() {
